@@ -1,0 +1,22 @@
+version: "3.9"
+services:
+  main:
+    build: .
+    configs:
+      - LDAP_URI
+      - LDAP_BASE
+      - LDAP_BINDDN
+    secrets:
+      - LDAP_BINDPW
+    ports:
+      - "3000:3000"
+configs:
+  LDAP_URI:
+    file: ./LDAP_URI.txt
+  LDAP_BASE:
+    file: ./LDAP_BASE.txt
+  LDAP_BINDDN:
+    file: ./LDAP_BINDDN.txt
+secrets:
+  LDAP_BINDPW:
+    file: ./LDAP_BINDPW.txt

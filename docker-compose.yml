@@ -1,0 +1,42 @@
+version: "3.8"
+services:
+  ldap:
+    image: osixia/openldap
+    ports:
+      - "389:389"
+      - "636:636"
+  ldap-admin:
+    depends_on:
+      - ldap
+    image: osixia/phpldapadmin
+    ports:
+      - "443:443"
+    environment: 
+      - PHPLDAPADMIN_LDAP_HOSTS=ldap 
+  gitserver:
+    depends_on:
+      - sshd-ldap
+    extends:
+      file: gitserver/docker-compose.yml
+      service: main
+  sshd-ldap:
+  # Dummy service, only needs to be built (gitserver uses built image as base)
+    image: sshd-ldap
+    build: sshd-ldap/
+    command: sh -c exit 0
+  www:
+    extends:
+      file: www/docker-compose.yml
+      service: main
+configs:
+  LDAP_URI:
+    file: ./LDAP_URI.txt
+  LDAP_BASE:
+    file: ./LDAP_BASE.txt
+  LDAP_BINDDN:
+    file: ./LDAP_BINDDN.txt
+secrets:
+  LDAP_BINDPW:
+    file: ./LDAP_BINDPW.txt
+volumes:
+  data:
